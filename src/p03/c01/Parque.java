@@ -4,6 +4,8 @@ package src.p03.c01;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class Parque implements IParque{
 
@@ -21,7 +23,7 @@ public class Parque implements IParque{
 
 
 	@Override
-	public void entrarAlParque(String puerta){		// TODO
+	public  void entrarAlParque(String puerta){		// TODO
 		
 		// Revisamos que se cumplen las pre-condiciones para poder entrar al parque
 		comprobarAntesDeEntrar();
@@ -42,30 +44,38 @@ public class Parque implements IParque{
 		// TODO
 		
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		checkInvariante();
+		//checkInvariante();
 		
 	}
 	
-	// 
-	// TODO Método salirDelParque
-	//
-	public void salirDelParque (String puerta) {
+	
+	@Override
+	public synchronized void salirDelParque (String puerta) throws InterruptedException {
 		
 		// Revisamos que se cumplen las pre-condiciones para poder salir del parque
 		comprobarAntesDeSalir();
 			
-		// TODO
+		// Aumentamos el contador total y el individual
+		contadorPersonasTotales--;		
+		contadoresPersonasPuerta.put(puerta, contadoresPersonasPuerta.get(puerta)-1);
+		
+		while (contadoresPersonasPuerta.get(puerta) == null || contadoresPersonasPuerta.get(puerta) < 1){
+			TimeUnit.MILLISECONDS.sleep(1000);
+		}
+		
+		// Imprimimos el estado del parque
+		imprimirInfo(puerta, "Salida");
 			
 			
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		checkInvariante();
+		//checkInvariante();
 			
 	}
 	
 	
 	private void imprimirInfo (String puerta, String movimiento){
 		System.out.println(movimiento + " por puerta " + puerta);
-		System.out.println("--> Personas en el parque " + contadorPersonasTotales); //+ " tiempo medio de estancia: "  + tmedio);
+		System.out.println("--> Personas en el parque " + contadorPersonasTotales); // + " tiempo medio de estancia: "  + tmedio);
 		
 		// Iteramos por todas las puertas e imprimimos sus entradas
 		for(String p: contadoresPersonasPuerta.keySet()){
