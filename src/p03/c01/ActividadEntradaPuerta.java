@@ -18,15 +18,28 @@ import java.util.logging.Logger;
 
 public class ActividadEntradaPuerta implements Runnable{
 
+	// Constante con el numero de entradas
 	private static final int NUMENTRADAS = 20;
+	
+	// Atributos de la clase
 	private String puerta;
 	private IParque parque;
 
+	// Constructor de clase
 	public ActividadEntradaPuerta(String puerta, IParque parque) {
 		this.puerta = puerta;
 		this.parque = parque;
 	}
 
+	/**
+	 * Metodo run()
+	 * 
+	 * Sustituye al heredado de Runnable.
+	 * 
+	 * Realiza entradas en el parque por la "puerta" que corre en este hilo hasta un total de las definidas en NUMENTRADAS
+	 * 
+	 * Al final, lanza un log cuando se ha terminado la ejecución del hilo
+	 */
 	@Override
 	public void run() {
 		for (int i = 0; i < NUMENTRADAS; i ++) {

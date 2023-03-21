@@ -13,13 +13,15 @@ package src.p03.c01;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-//import java.util.Random;
-//import java.util.concurrent.TimeUnit;
+
 
 public class Parque implements IParque{
 
-	// Declaración de atributos de la clase.
-	private static final int MAXPERSONAS = 50; //Número máximo de personas en el parque
+	
+	// Constante con el numero máximo de personas
+	private static final int MAXPERSONAS = 50; 
+	
+	// Atributos de la clase.
 	private int contadorPersonasTotales;
 	private int contadorPersonasHanEntrado;
 	private Hashtable<String, Integer> contadoresPersonasPuertaEntrada;
