@@ -6,7 +6,8 @@ import java.util.Hashtable;
 public class Parque implements IParque{
 
 
-	// TODO 
+	// TODO
+	private static final int MAXPERSONAS = 50; #Número máximo de personas en el parque
 	private int contadorPersonasTotales;
 	private Hashtable<String, Integer> contadoresPersonasPuerta;
 	
