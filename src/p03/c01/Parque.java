@@ -13,38 +13,42 @@ public class Parque implements IParque{
 	// TODO
 	private static final int MAXPERSONAS = 50; //Número máximo de personas en el parque
 	private int contadorPersonasTotales;
-	private Hashtable<String, Integer> contadoresPersonasPuerta;
+	private Hashtable<String, Integer> contadoresPersonasPuertaEntrada;
+	private Hashtable<String, Integer> contadoresPersonasPuertaSalida;
 	
 	
 	public Parque() {
 		contadorPersonasTotales = 0;
-		contadoresPersonasPuerta = new Hashtable<String, Integer>();
+		contadoresPersonasPuertaEntrada = new Hashtable<String, Integer>();
+		contadoresPersonasPuertaSalida = new Hashtable<String, Integer>();
 	}
 
 
 	@Override
-	public  void entrarAlParque(String puerta){		// TODO
+	public synchronized void entrarAlParque(String puerta){		// TODO
 		
 		// Revisamos que se cumplen las pre-condiciones para poder entrar al parque
 		comprobarAntesDeEntrar();
 		
 		// Si no hay entradas por esa puerta, inicializamos
-		if (contadoresPersonasPuerta.get(puerta) == null){
-			contadoresPersonasPuerta.put(puerta, 0);
+		if (contadoresPersonasPuertaEntrada.get(puerta) == null){
+			contadoresPersonasPuertaEntrada.put(puerta, 0);
 		}
 		
 		
 		// Aumentamos el contador total y el individual
 		contadorPersonasTotales++;		
-		contadoresPersonasPuerta.put(puerta, contadoresPersonasPuerta.get(puerta)+1);
+		contadoresPersonasPuertaEntrada.put(puerta, contadoresPersonasPuertaEntrada.get(puerta)+1);
 		
 		// Imprimimos el estado del parque
-		imprimirInfo(puerta, "Entrada");
+		imprimirInfoEntrada(puerta, "Entrada");
 		
 		// TODO
 		
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		//checkInvariante();
+		//checkInvariante(contadoresPersonasPuertaEntrada);
+		
+		notifyAll();
 		
 	}
 	
@@ -53,40 +57,62 @@ public class Parque implements IParque{
 	public synchronized void salirDelParque (String puerta) throws InterruptedException {
 		
 		// Revisamos que se cumplen las pre-condiciones para poder salir del parque
-		comprobarAntesDeSalir();
+		comprobarAntesDeSalir(puerta);
 			
 		// Aumentamos el contador total y el individual
 		contadorPersonasTotales--;		
-		contadoresPersonasPuerta.put(puerta, contadoresPersonasPuerta.get(puerta)-1);
+		contadoresPersonasPuertaSalida.put(puerta, contadoresPersonasPuertaSalida.get(puerta)+1);
 		
-		while (contadoresPersonasPuerta.get(puerta) == null || contadoresPersonasPuerta.get(puerta) < 1){
-			TimeUnit.MILLISECONDS.sleep(1000);
-		}
+		//while (contadoresPersonasPuertaSalida.get(puerta) == null || contadoresPersonasPuertaSalida.get(puerta) < 1){
+		//	TimeUnit.MILLISECONDS.sleep(1000);
+		//}
 		
 		// Imprimimos el estado del parque
-		imprimirInfo(puerta, "Salida");
+		imprimirInfoSalida(puerta, "Salida");
 			
 			
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		//checkInvariante();
+		//checkInvariante(contadoresPersonasPuertaSalida);
+		
+		notifyAll();
 			
 	}
 	
 	
-	private void imprimirInfo (String puerta, String movimiento){
+	private void imprimirInfoEntrada (String puerta, String movimiento){
 		System.out.println(movimiento + " por puerta " + puerta);
 		System.out.println("--> Personas en el parque " + contadorPersonasTotales); // + " tiempo medio de estancia: "  + tmedio);
 		
 		// Iteramos por todas las puertas e imprimimos sus entradas
-		for(String p: contadoresPersonasPuerta.keySet()){
-			System.out.println("----> Por puerta " + p + " " + contadoresPersonasPuerta.get(p));
+		for(String p: contadoresPersonasPuertaEntrada.keySet()){
+			System.out.println("----> Por puerta " + p + " " + contadoresPersonasPuertaEntrada.get(p));
 		}
 		System.out.println(" ");
 	}
 	
-	private int sumarContadoresPuerta() {
+	private void imprimirInfoSalida (String puerta, String movimiento){
+		System.out.println(movimiento + " por puerta " + puerta);
+		System.out.println("--> Personas en el parque " + contadorPersonasTotales); // + " tiempo medio de estancia: "  + tmedio);
+		
+		// Iteramos por todas las puertas e imprimimos sus entradas
+		for(String p: contadoresPersonasPuertaSalida.keySet()){
+			System.out.println("----> Por puerta " + p + " " + contadoresPersonasPuertaSalida.get(p));
+		}
+		System.out.println(" ");
+	}
+	
+	private int sumarContadoresPuertaEntrada() {
 		int sumaContadoresPuerta = 0;
-			Enumeration<Integer> iterPuertas = contadoresPersonasPuerta.elements();
+			Enumeration<Integer> iterPuertas = contadoresPersonasPuertaEntrada.elements();
+			while (iterPuertas.hasMoreElements()) {
+				sumaContadoresPuerta += iterPuertas.nextElement();
+			}
+		return sumaContadoresPuerta;
+	}
+	
+	private int sumarContadoresPuertaSalida() {
+		int sumaContadoresPuerta = 0;
+			Enumeration<Integer> iterPuertas = contadoresPersonasPuertaSalida.elements();
 			while (iterPuertas.hasMoreElements()) {
 				sumaContadoresPuerta += iterPuertas.nextElement();
 			}
@@ -94,7 +120,7 @@ public class Parque implements IParque{
 	}
 	
 	protected void checkInvariante() {
-		assert sumarContadoresPuerta() == contadorPersonasTotales : "INV: La suma de contadores de las puertas debe ser igual al valor del contador del parte";
+		assert sumarContadoresPuertaEntrada() == contadorPersonasTotales : "INV: La suma de contadores de las puertas debe ser igual al valor del contador del parte";
 		// TODO 
 		// TODO
 		
@@ -103,15 +129,42 @@ public class Parque implements IParque{
 	}
 
 	protected void comprobarAntesDeEntrar(){
-		//
-		// TODO
-		//
+		
+		// Antes de permitir la entrada hay que comprobar que no el parque no esté lleno
+		if (contadorPersonasTotales < MAXPERSONAS) {
+			return; // se puede pasar
+		}
+		while (contadorPersonasTotales == MAXPERSONAS) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				System.out.println(e.toString());
+			}
+		}
 	}
 
-	protected void comprobarAntesDeSalir(){
-		//
-		// TODO
-		//
+	protected void comprobarAntesDeSalir(String puerta){
+		
+		// Si no hay entradas por esa puerta, inicializamos
+		if (contadoresPersonasPuertaSalida.get(puerta) == null){
+			contadoresPersonasPuertaSalida.put(puerta, 0);
+		}
+		
+		if (contadoresPersonasPuertaEntrada.get(puerta) == null){
+			contadoresPersonasPuertaEntrada.put(puerta, 0);
+		}
+		
+		if (contadoresPersonasPuertaEntrada.get(puerta) > 0 && contadorPersonasTotales > 0) {
+			return;
+		}
+		
+		while (contadoresPersonasPuertaEntrada.get(puerta) == 0 && contadorPersonasTotales < 1) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				System.out.println(e.toString());
+			}
+		}
 	}
 
 
