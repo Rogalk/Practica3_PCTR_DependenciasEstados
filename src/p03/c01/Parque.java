@@ -7,7 +7,7 @@ public class Parque implements IParque{
 
 
 	// TODO
-	private static final int MAXPERSONAS = 50; #Número máximo de personas en el parque
+	private static final int MAXPERSONAS = 50; //Número máximo de personas en el parque
 	private int contadorPersonasTotales;
 	private Hashtable<String, Integer> contadoresPersonasPuerta;
 	
