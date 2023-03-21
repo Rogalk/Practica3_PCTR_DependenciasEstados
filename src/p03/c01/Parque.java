@@ -1,4 +1,13 @@
-// NADA
+/**
+ * Clase Parque
+ * 
+ * @Author: Daniel Fernández Barrientos
+ * 
+ * @version: 1.0
+ * 
+ * @fecha: 21/03/2023
+ * 
+ */
 
 package src.p03.c01;
 
@@ -9,7 +18,7 @@ import java.util.Hashtable;
 
 public class Parque implements IParque{
 
-
+	// Declaración de atributos de la clase.
 	private static final int MAXPERSONAS = 50; //Número máximo de personas en el parque
 	private int contadorPersonasTotales;
 	private int contadorPersonasHanEntrado;
@@ -17,6 +26,7 @@ public class Parque implements IParque{
 	private Hashtable<String, Integer> contadoresPersonasPuertaSalida;
 	
 	
+	// Constructor de la clase.
 	public Parque() {
 		contadorPersonasTotales = 0;
 		contadorPersonasHanEntrado = 0;
@@ -24,9 +34,16 @@ public class Parque implements IParque{
 		contadoresPersonasPuertaSalida = new Hashtable<String, Integer>();
 	}
 
-
+	/**
+	 * Metodo entrarAlParque().
+	 * 
+	 * Tras comprobar las pre-condiciones, aumenta en 1 el número de personas totales y que han entrado, además
+	 * de aumentar en 1 el número de personas que han entrado por la puerta recibida como argumento.
+	 * 
+	 * @param String puerta: Nombre de la puerta por la que se entra
+	 */
 	@Override
-	public synchronized void entrarAlParque(String puerta){		// TODO
+	public synchronized void entrarAlParque(String puerta) {	
 		
 		// Revisamos que se cumplen las pre-condiciones para poder entrar al parque
 		comprobarAntesDeEntrar(puerta);
@@ -37,18 +54,25 @@ public class Parque implements IParque{
 		contadoresPersonasPuertaEntrada.put(puerta, contadoresPersonasPuertaEntrada.get(puerta)+1);
 		
 		// Imprimimos el estado del parque
-		imprimirInfoEntrada(puerta, "Entrada");
+		imprimirInfo(puerta, "Entrada");
 		
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
 		checkInvariante();
 		
-		notifyAll();
+		notify();
 		
 	}
 	
-	
+	/**
+	 * Metodo salirDelParque().
+	 * 
+	 * Tras comprobar las pre-condiciones, disminuye en 1 el número de personas totales, además
+	 * de aumentar en 1 el número de personas que han salido por la puerta recibida como argumento.
+	 * 
+	 * @param String puerta: Nombre de la puerta por la que se sale
+	 */
 	@Override
-	public synchronized void salirDelParque (String puerta) throws InterruptedException {
+	public synchronized void salirDelParque (String puerta) {
 		
 		// Revisamos que se cumplen las pre-condiciones para poder salir del parque
 		comprobarAntesDeSalir(puerta);
@@ -58,61 +82,60 @@ public class Parque implements IParque{
 		contadoresPersonasPuertaSalida.put(puerta, contadoresPersonasPuertaSalida.get(puerta)+1);
 				
 		// Imprimimos el estado del parque
-		imprimirInfoSalida(puerta, "Salida");
+		imprimirInfo(puerta, "Salida");
 			
 			
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
 		checkInvariante();
 		
-		notifyAll();
+		notify();
 			
 	}
 	
 	
-	private void imprimirInfoEntrada (String puerta, String movimiento){
+	private void imprimirInfo (String puerta, String movimiento){
 		System.out.println(movimiento + " por puerta " + puerta);
-		System.out.println("--> Personas en el parque " + contadorPersonasTotales); // + " tiempo medio de estancia: "  + tmedio);
 		
-		// Iteramos por todas las puertas e imprimimos sus entradas
-		for(String p: contadoresPersonasPuertaEntrada.keySet()){
-			System.out.println("----> Por puerta " + p + " " + contadoresPersonasPuertaEntrada.get(p));
+		if (movimiento == "Entrada") {
+			System.out.println("--> Personas en el parque " + contadorPersonasTotales);
+			
+			// Iteramos por todas las puertas e imprimimos sus entradas
+			for(String p: contadoresPersonasPuertaEntrada.keySet()){
+				System.out.println("E---> Por puerta " + p + " " + contadoresPersonasPuertaEntrada.get(p));
+			} 
+		} else {
+			System.out.println("--> Personas en el parque " + contadorPersonasTotales);
+			for(String p: contadoresPersonasPuertaSalida.keySet()){
+				System.out.println("S---> Por puerta " + p + " " + contadoresPersonasPuertaSalida.get(p));
+			}
 		}
+		
 		System.out.println(" ");
 	}
 	
-	private void imprimirInfoSalida (String puerta, String movimiento){
-		System.out.println(movimiento + " por puerta " + puerta);
-		System.out.println("--> Personas en el parque " + contadorPersonasTotales); // + " tiempo medio de estancia: "  + tmedio);
-		
-		// Iteramos por todas las puertas e imprimimos sus entradas
-		for(String p: contadoresPersonasPuertaSalida.keySet()){
-			System.out.println("----> Por puerta " + p + " " + contadoresPersonasPuertaSalida.get(p));
-		}
-		System.out.println(" ");
-	}
-	
-	private int sumarContadoresPuertaEntrada() {
+	private int sumarContadoresPuerta(String movimiento) {
 		int sumaContadoresPuerta = 0;
+		
+		if (movimiento == "Entrada") {
 			Enumeration<Integer> iterPuertas = contadoresPersonasPuertaEntrada.elements();
 			while (iterPuertas.hasMoreElements()) {
 				sumaContadoresPuerta += iterPuertas.nextElement();
 			}
-		return sumaContadoresPuerta;
-	}
-	
-	private int sumarContadoresPuertaSalida() {
-		int sumaContadoresPuerta = 0;
+		} else {
 			Enumeration<Integer> iterPuertas = contadoresPersonasPuertaSalida.elements();
 			while (iterPuertas.hasMoreElements()) {
 				sumaContadoresPuerta += iterPuertas.nextElement();
 			}
+		}
+
 		return sumaContadoresPuerta;
 	}
 	
+	
 	protected void checkInvariante() {
-		assert sumarContadoresPuertaEntrada() == contadorPersonasHanEntrado : "INV: La suma de contadores de las puertas de entrada debe ser igual al valor del contador de personas que han entrado";
-		assert sumarContadoresPuertaSalida() <= sumarContadoresPuertaEntrada() : "INV: No puede haber más salidas que entradas";
-		assert sumarContadoresPuertaEntrada() - sumarContadoresPuertaSalida() == contadorPersonasTotales : "INV: Las personas que han entrado menos las que han salido tiene que ser al contador del parque";
+		assert sumarContadoresPuerta("Entrada") == contadorPersonasHanEntrado : "INV: La suma de contadores de las puertas de entrada debe ser igual al valor del contador de personas que han entrado";
+		assert sumarContadoresPuerta("Salida") <= sumarContadoresPuerta("Entrada") : "INV: No puede haber más salidas que entradas";
+		assert sumarContadoresPuerta("Entrada") - sumarContadoresPuerta("Salida") == contadorPersonasTotales : "INV: Las personas que han entrado menos las que han salido tiene que ser al contador del parque";
 		assert contadorPersonasTotales <= MAXPERSONAS : "INV: Nunca puede haber más de 50 personas en el parque";
 	}
 
