@@ -93,16 +93,25 @@ public class Parque implements IParque{
 	}
 	
 	
+	/**
+	 * Metodo imprimirInfo().
+	 * 
+	 * Recibida una puerta y un movimiento, muestra la información asociada de entradas/salidas
+	 * 
+	 * @param String puerta : Nombre de la puerta de la que se quiere sacar información
+	 * @param String movimiento : Movimiento del que se quiere sacar información
+	 */
 	private void imprimirInfo (String puerta, String movimiento){
 		System.out.println(movimiento + " por puerta " + puerta);
 		
+		// Iteramos por todas las puertas e imprimimos sus entradas
 		if (movimiento == "Entrada") {
 			System.out.println("--> Personas en el parque " + contadorPersonasTotales);
-			
-			// Iteramos por todas las puertas e imprimimos sus entradas
 			for(String p: contadoresPersonasPuertaEntrada.keySet()){
 				System.out.println("E---> Por puerta " + p + " " + contadoresPersonasPuertaEntrada.get(p));
 			} 
+			
+		// Iteramos por todas las puertas e imprimimos sus salidas
 		} else {
 			System.out.println("--> Personas en el parque " + contadorPersonasTotales);
 			for(String p: contadoresPersonasPuertaSalida.keySet()){
@@ -113,6 +122,14 @@ public class Parque implements IParque{
 		System.out.println(" ");
 	}
 	
+	/**
+	 * Metodo sumarContadoresPuerta()
+	 * 
+	 * Dado un movimiento, devuelve el número de personas que han entrado o salido por cada puerta
+	 * 
+	 * @param String movimiento : Parámetro que indica si se quieren calcular los contadores de las puertas de entrada o de salida.
+	 * @return sumaContadoresPuerta : Numero de personas que han entrado o salido por las puertas
+	 */
 	private int sumarContadoresPuerta(String movimiento) {
 		int sumaContadoresPuerta = 0;
 		
@@ -132,6 +149,12 @@ public class Parque implements IParque{
 	}
 	
 	
+	/**
+	 * Metodo checkInvariante().
+	 * 
+	 * POST-CONDICIONES - Siempre se tienen que dar los assert indicados.
+	 * 
+	 */
 	protected void checkInvariante() {
 		assert sumarContadoresPuerta("Entrada") == contadorPersonasHanEntrado : "INV: La suma de contadores de las puertas de entrada debe ser igual al valor del contador de personas que han entrado";
 		assert sumarContadoresPuerta("Salida") <= sumarContadoresPuerta("Entrada") : "INV: No puede haber más salidas que entradas";
@@ -139,6 +162,13 @@ public class Parque implements IParque{
 		assert contadorPersonasTotales <= MAXPERSONAS : "INV: Nunca puede haber más de 50 personas en el parque";
 	}
 
+	/**
+	 * Metodo comprobarAntesDeEntrar().
+	 * 
+	 * PRE-CONDICIONES : Condiciones que se tienen que dar antes de que el método entradaAlParque() pueda continuar su ejecución
+	 * 
+	 * @param String puerta : puerta que se va a comprobar
+	 */
 	protected  void comprobarAntesDeEntrar(String puerta){
 		
 		// Si no hay entradas por esa puerta, inicializamos
@@ -159,6 +189,14 @@ public class Parque implements IParque{
 		}
 	}
 
+	
+	/**
+	 * Metodo comprobarAntesDeSalir().
+	 * 
+	 * PRE-CONDICIONES : Condiciones que se tienen que dar antes de que el método salidaDelParque() pueda continuar su ejecución
+	 * 
+	 * @param String puerta : puerta que se va a comprobar
+	 */
 	protected  void comprobarAntesDeSalir(String puerta){
 		
 		// Si no hay salidas por esa puerta, inicializamos
@@ -167,15 +205,15 @@ public class Parque implements IParque{
 		}
 		
 		// Si no hay entradas por esa puerta y se intenta salir antes que entrar, la inicializamos
-		if (contadoresPersonasPuertaEntrada.get(puerta) == null){
-			contadoresPersonasPuertaEntrada.put(puerta, 0);
-		}
+		//	if (contadoresPersonasPuertaEntrada.get(puerta) == null){
+		//		contadoresPersonasPuertaEntrada.put(puerta, 0);
+		//	}
 		
-		if (contadoresPersonasPuertaEntrada.get(puerta) >= 1 && contadorPersonasTotales >= 1) {
+		if (contadoresPersonasPuertaEntrada.get(puerta) != null && contadoresPersonasPuertaEntrada.get(puerta) >= 1  && contadorPersonasTotales >= 1) {
 			return;
 		}
 		
-		while (contadoresPersonasPuertaEntrada.get(puerta) < 1 || contadorPersonasTotales < 1) {
+		while (contadoresPersonasPuertaEntrada.get(puerta) == null || contadorPersonasTotales < 1) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
