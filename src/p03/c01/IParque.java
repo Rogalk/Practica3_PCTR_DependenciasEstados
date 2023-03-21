@@ -1,4 +1,4 @@
-/*
+/**
  * Interfaz IParque
  * 
  * @Author: Daniel Fernández Barrientos

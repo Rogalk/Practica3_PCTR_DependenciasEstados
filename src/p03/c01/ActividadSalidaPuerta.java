@@ -1,4 +1,4 @@
-/*
+/**
  * Clase ActividadSalidaPuerta
  * 
  * @Author: Daniel Fernández Barrientos
@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 public class ActividadSalidaPuerta implements Runnable{
 
-	private static final int NUMSALIDAS = 10;
+	private static final int NUMSALIDAS = 20;
 	private String puerta;
 	private IParque parque;
 
@@ -32,7 +32,7 @@ public class ActividadSalidaPuerta implements Runnable{
 		for (int i = 0; i < NUMSALIDAS; i ++) {
 			try {
 				parque.salirDelParque(puerta);
-				TimeUnit.MILLISECONDS.sleep(new Random().nextInt(5)*1200);
+				TimeUnit.MILLISECONDS.sleep(new Random().nextInt(5)*1400);
 			} catch (InterruptedException e) {
 				Logger.getGlobal().log(Level.INFO, "Entrada interrumpida");
 				Logger.getGlobal().log(Level.INFO, e.toString());

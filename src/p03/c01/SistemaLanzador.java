@@ -1,6 +1,26 @@
+/**
+ * Clase SistemaLanzador
+ * 
+ * @Author: Daniel Fernández Barrientos
+ * 
+ * @version: 1.0
+ * 
+ * @fecha: 21/03/2023
+ * 
+ */
+
+
 package src.p03.c01;
 
 public class SistemaLanzador {
+	
+	/**
+	 * main().
+	 * 
+	 * Ejecuta la simulación de entradas o salidas.
+	 * 
+	 * @param args : Se tiene que hacer Run configurations.. y poner 5 en argumentos (5 puertas) y -ea en atributos.
+	 */
 	public static void main(String[] args) {
 		
 		IParque parque = new Parque();
