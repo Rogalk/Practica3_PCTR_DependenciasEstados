@@ -20,13 +20,14 @@ public class Parque implements IParque{
 	@Override
 	public void entrarAlParque(String puerta){		// TODO
 		
+		// Revisamos que se cumplen las pre-condiciones para poder entrar al parque
+		comprobarAntesDeEntrar()
+		
 		// Si no hay entradas por esa puerta, inicializamos
 		if (contadoresPersonasPuerta.get(puerta) == null){
 			contadoresPersonasPuerta.put(puerta, 0);
 		}
 		
-		// TODO
-				
 		
 		// Aumentamos el contador total y el individual
 		contadorPersonasTotales++;		
@@ -37,14 +38,26 @@ public class Parque implements IParque{
 		
 		// TODO
 		
-		
-		// TODO
+		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
+		checkInvariante()
 		
 	}
 	
 	// 
 	// TODO Método salirDelParque
 	//
+	public void salirDelParque (String puerta) {
+		
+		// Revisamos que se cumplen las pre-condiciones para poder salir del parque
+		comprobarAntesDeSalir()
+			
+		// TODO
+			
+			
+		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
+		checkInvariante()
+			
+	}
 	
 	
 	private void imprimirInfo (String puerta, String movimiento){
