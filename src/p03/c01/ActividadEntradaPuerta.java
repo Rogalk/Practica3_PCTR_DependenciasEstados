@@ -32,7 +32,7 @@ public class ActividadEntradaPuerta implements Runnable{
 			for (int i = 0; i < NUMENTRADAS; i ++) {
 				try {
 					parque.entrarAlParque(puerta);
-					TimeUnit.MILLISECONDS.sleep(new Random().nextInt(5)*500);
+					TimeUnit.MILLISECONDS.sleep(new Random().nextInt(5)*700);
 				} catch (InterruptedException e) {
 					Logger.getGlobal().log(Level.INFO, "Entrada interrumpida");
 					Logger.getGlobal().log(Level.INFO, e.toString());

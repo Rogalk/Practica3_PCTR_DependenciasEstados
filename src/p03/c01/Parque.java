@@ -13,12 +13,14 @@ public class Parque implements IParque{
 	// TODO
 	private static final int MAXPERSONAS = 50; //Número máximo de personas en el parque
 	private int contadorPersonasTotales;
+	private int contadorPersonasHanEntrado;
 	private Hashtable<String, Integer> contadoresPersonasPuertaEntrada;
 	private Hashtable<String, Integer> contadoresPersonasPuertaSalida;
 	
 	
 	public Parque() {
 		contadorPersonasTotales = 0;
+		contadorPersonasHanEntrado = 0;
 		contadoresPersonasPuertaEntrada = new Hashtable<String, Integer>();
 		contadoresPersonasPuertaSalida = new Hashtable<String, Integer>();
 	}
@@ -37,7 +39,8 @@ public class Parque implements IParque{
 		
 		
 		// Aumentamos el contador total y el individual
-		contadorPersonasTotales++;		
+		contadorPersonasTotales++;
+		contadorPersonasHanEntrado++;
 		contadoresPersonasPuertaEntrada.put(puerta, contadoresPersonasPuertaEntrada.get(puerta)+1);
 		
 		// Imprimimos el estado del parque
@@ -46,7 +49,7 @@ public class Parque implements IParque{
 		// TODO
 		
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		//checkInvariante(contadoresPersonasPuertaEntrada);
+		checkInvariante();
 		
 		notifyAll();
 		
@@ -72,7 +75,7 @@ public class Parque implements IParque{
 			
 			
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		//checkInvariante(contadoresPersonasPuertaSalida);
+		checkInvariante();
 		
 		notifyAll();
 			
@@ -120,7 +123,9 @@ public class Parque implements IParque{
 	}
 	
 	protected void checkInvariante() {
-		assert sumarContadoresPuertaEntrada() == contadorPersonasTotales : "INV: La suma de contadores de las puertas debe ser igual al valor del contador del parte";
+		assert sumarContadoresPuertaEntrada() == contadorPersonasHanEntrado : "INV: La suma de contadores de las puertas de entrada debe ser igual al valor del contador de personas que han entrado";
+		assert sumarContadoresPuertaSalida() <= sumarContadoresPuertaEntrada() : "INV: No puede haber más salidas que entradas";
+		assert sumarContadoresPuertaEntrada() - sumarContadoresPuertaSalida() == contadorPersonasTotales : "INV: Las personas que han entrado menos las que han salido tiene que ser al contador del parque";
 		// TODO 
 		// TODO
 		
@@ -128,7 +133,7 @@ public class Parque implements IParque{
 		
 	}
 
-	protected void comprobarAntesDeEntrar(){
+	protected synchronized void comprobarAntesDeEntrar(){
 		
 		// Antes de permitir la entrada hay que comprobar que no el parque no esté lleno
 		if (contadorPersonasTotales < MAXPERSONAS) {
@@ -143,7 +148,7 @@ public class Parque implements IParque{
 		}
 	}
 
-	protected void comprobarAntesDeSalir(String puerta){
+	protected synchronized void comprobarAntesDeSalir(String puerta){
 		
 		// Si no hay entradas por esa puerta, inicializamos
 		if (contadoresPersonasPuertaSalida.get(puerta) == null){
@@ -154,11 +159,11 @@ public class Parque implements IParque{
 			contadoresPersonasPuertaEntrada.put(puerta, 0);
 		}
 		
-		if (contadoresPersonasPuertaEntrada.get(puerta) > 0 && contadorPersonasTotales > 0) {
+		if (contadoresPersonasPuertaEntrada.get(puerta) >= 1 && contadorPersonasTotales >= 1) {
 			return;
 		}
 		
-		while (contadoresPersonasPuertaEntrada.get(puerta) == 0 && contadorPersonasTotales < 1) {
+		while (contadoresPersonasPuertaEntrada.get(puerta) < 1 || contadorPersonasTotales < 1) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
