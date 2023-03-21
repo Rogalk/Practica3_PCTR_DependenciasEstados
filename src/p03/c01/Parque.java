@@ -22,7 +22,7 @@ public class Parque implements IParque{
 	public void entrarAlParque(String puerta){		// TODO
 		
 		// Revisamos que se cumplen las pre-condiciones para poder entrar al parque
-		comprobarAntesDeEntrar()
+		comprobarAntesDeEntrar();
 		
 		// Si no hay entradas por esa puerta, inicializamos
 		if (contadoresPersonasPuerta.get(puerta) == null){
@@ -40,7 +40,7 @@ public class Parque implements IParque{
 		// TODO
 		
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		checkInvariante()
+		checkInvariante();
 		
 	}
 	
@@ -50,13 +50,13 @@ public class Parque implements IParque{
 	public void salirDelParque (String puerta) {
 		
 		// Revisamos que se cumplen las pre-condiciones para poder salir del parque
-		comprobarAntesDeSalir()
+		comprobarAntesDeSalir();
 			
 		// TODO
 			
 			
 		// Revisamos que se cumplen las post-condiciones tras la entrada en el parque
-		checkInvariante()
+		checkInvariante();
 			
 	}
 	
